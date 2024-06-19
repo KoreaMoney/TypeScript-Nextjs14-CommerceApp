@@ -21,6 +21,8 @@ TypeScript기본 학습
 
 Nextjs14, TailwindCss, wix
 
+## Headless
+
 <a href="https://dev.wix.com/docs/go-headless/coding/java-script-sdk/visitors-and-members/create-a-client-with-oauth">WIX doc</a>
 <br/>
 <a href="https://www.wix.com/studio/developers/headless">WIX Headless</a>
