@@ -2,11 +2,17 @@
 
 import { useState } from "react";
 
-const Add = () => {
+interface IProps {
+  productId: string;
+  variantId: string;
+  stockNumber: number;
+}
+
+const Add = ({ productId, variantId, stockNumber }: IProps) => {
   const [quantity, setQuantity] = useState(1);
 
-  // TEMPORARY
-  const stock = 4;
+  // // TEMPORARY
+  // const stock = 4;
 
   const handleQuantity = (type: "dec" | "inc") => {
     if (type === "dec" && quantity > 1) {
@@ -32,7 +38,7 @@ const Add = () => {
             </button>
           </div>
           <div className="text-xs">
-            Only <span className="text-red-500">4 items</span> left!
+            Only <span className="text-red-500">{stockNumber} items</span> left!
             <br /> {"Don't miss it"}
           </div>
         </div>

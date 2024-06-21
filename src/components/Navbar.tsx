@@ -19,8 +19,8 @@ const Navbar = () => {
         {/* LEFT */}
         <div className="w-1/3 xl:w-1/2 flex items-center gap-12">
           <Link href="/" className="flex items-center gap-3">
-            <Image src="/logo2.png" alt="logo" width={24} height={24} />
-            <div className="text-2xl tracking-wide">DWSH</div>
+            <Image src="/logo3.png" alt="logo" width={50} height={50} />
+            <div className="text-2xl tracking-wide font-mono">DWSH</div>
           </Link>
           <div className="hidden xl:flex gap-4">
             <Link href="/">Home</Link>
