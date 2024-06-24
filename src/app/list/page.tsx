@@ -31,9 +31,12 @@ const ListPage = async ({ searchParams }: IProps) => {
       {/* FILTER */}
       <Filter />
       {/* PRODUCTS */}
-      <h1 className="mt-12 text-xl font-semibold">Shoes For you!</h1>
+      <h1 className="mt-12 text-xl font-semibold">{category?.collection?.name} For you!</h1>
       <Suspense fallback={<Skeleton />}>
-        <ProductList categoryId={category.collection?._id || "00000000-000000-000000-000000000001"} searchParams={searchParams} />
+        <ProductList
+          categoryId={category.collection?._id || "00000000-000000-000000-000000000001"}
+          searchParams={searchParams}
+        />
       </Suspense>
     </div>
   );

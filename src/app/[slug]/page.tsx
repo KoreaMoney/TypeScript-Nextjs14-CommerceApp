@@ -33,12 +33,12 @@ const SinglePage = async ({ params }: IProps) => {
         <h1 className="text-4xl font-medium">{product.name}</h1>
         <p className="text-gray-500" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(product.description) }}></p>
         <div className="h-[2px] bg-gray-100" />
-        {product.priceData?.price === product.priceData?.discountedPrice ? (
-          <h2 className="font-medium text-2xl">{product.priceData?.formatted.price}</h2>
+        {product.price?.price === product.price?.discountedPrice ? (
+          <h2 className="font-medium text-2xl">{product.price?.formatted.price}</h2>
         ) : (
           <div className="flex items-center gap-4">
-            <h3 className="text-xl text-gray-500 line-through">{product.priceData?.formatted.price}</h3>
-            <h2 className="font-medium text-2xl">{product.priceData?.formatted.discountedPrice}</h2>
+            <h3 className="text-xl text-gray-500 line-through">{product.price?.formatted.price}</h3>
+            <h2 className="font-medium text-2xl">{product.price?.formatted.discountedPrice}</h2>
           </div>
         )}
         <div className="h-[2px] bg-gray-100" />
@@ -49,7 +49,11 @@ const SinglePage = async ({ params }: IProps) => {
             productOptions={product.productOptions}
           />
         ) : (
-          <Add productId={product._id!} variantId="00000000-000000-000000-000000000000" stockNumber={product.stock?.quantity ||0 } />
+          <Add
+            productId={product._id!}
+            variantId="00000000-000000-000000-000000000000"
+            stockNumber={product.stock?.quantity || 0}
+          />
         )}
         <div className="h-[2px] bg-gray-100" />
         {product.additionalInfoSections?.map((section: any) => (
