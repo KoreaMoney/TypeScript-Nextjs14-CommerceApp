@@ -3,6 +3,7 @@ import Image from "next/image";
 import { wixClientServer } from "@/lib/wixClientServer";
 import { products } from "@wix/stores";
 import DOMPurify from "isomorphic-dompurify";
+import Pageination from "./Pageination";
 
 interface IProps {
   categoryId: string;
@@ -10,7 +11,7 @@ interface IProps {
   searchParams?: any;
 }
 
-const PRODUCT_PER_PAGE = 20;
+const PRODUCT_PER_PAGE = 8;
 
 const ProductList = async ({ categoryId, limit, searchParams }: IProps) => {
   const wixClient = await wixClientServer();
@@ -25,18 +26,28 @@ const ProductList = async ({ categoryId, limit, searchParams }: IProps) => {
     .limit(limit || PRODUCT_PER_PAGE)
     .skip(searchParams?.page ? parseInt(searchParams.page) * (limit || PRODUCT_PER_PAGE) : 0);
 
+  const res = await productQuery.find();
+
   if (searchParams?.sort) {
     const [sortType, sortBy] = searchParams.sort.split(" ");
 
-    if (sortType === "asc") {
-      productQuery.ascending(sortBy);
-    }
-    if (sortType === "desc") {
-      productQuery.descending(sortBy);
+    const sortFunctions = {
+      price: (a, b) => {
+        const priceA = a.price?.price || 0;
+        const priceB = b.price?.price || 0;
+        return sortType === "asc" ? priceA - priceB : priceB - priceA;
+      },
+      lastUpdated: (a, b) => {
+        const dateA = new Date(a?.lastUpdated).getTime() || 0;
+        const dateB = new Date(b?.lastUpdated).getTime() || 0;
+        return sortType === "asc" ? dateB - dateA : dateA - dateB;
+      },
+    };
+
+    if (sortFunctions[sortBy]) {
+      res.items.sort(sortFunctions[sortBy]);
     }
   }
-
-  const res = await productQuery.find();
 
   return (
     <div className="mt-12 flex gap-x-8 gap-y-16 justify-between flex-wrap">
@@ -80,6 +91,7 @@ const ProductList = async ({ categoryId, limit, searchParams }: IProps) => {
           </button>
         </Link>
       ))}
+      <Pageination currentPage={res.currentPage || 0} hasPrev={res.hasPrev()} hasNext={res.hasNext()} />
     </div>
   );
 };
