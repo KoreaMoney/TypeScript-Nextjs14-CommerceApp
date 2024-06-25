@@ -18,7 +18,7 @@ const Add = ({ productId, variantId, stockNumber }: IProps) => {
     if (type === "dec" && quantity > 1) {
       setQuantity((prev) => prev - 1);
     }
-    if (type === "inc" && quantity < stock) {
+    if (type === "inc" && quantity < stockNumber) {
       setQuantity((prev) => prev + 1);
     }
   };
@@ -37,10 +37,14 @@ const Add = ({ productId, variantId, stockNumber }: IProps) => {
               +
             </button>
           </div>
-          <div className="text-xs">
-            Only <span className="text-red-500">{stockNumber} items</span> left!
-            <br /> {"Don't miss it"}
-          </div>
+          {stockNumber < 1 ? (
+            <div className="text-xs">모든 상품이 매진되었습니다.</div>
+          ) : (
+            <div className="text-xs">
+              Only <span className="text-red-500">{stockNumber} items</span> left!
+              <br /> {"Don't miss it"}
+            </div>
+          )}
         </div>
         <button
           className="w-36 text-sm rounded-3xl ring-1 ring-alarm text-alarm py-2 px-4 hover:bg-alarm hover:text-white 
