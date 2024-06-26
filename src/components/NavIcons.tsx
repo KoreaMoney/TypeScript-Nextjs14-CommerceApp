@@ -2,29 +2,33 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import Cookies from "js-cookie";
 import CartModal from "./CartModal";
 import { useWixClient } from "@/hooks/useWixClient";
 
 const NavIcons = () => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
+  const wixClient = useWixClient();
   const router = useRouter();
+  const isLoggedIn = wixClient.auth.loggedIn();
 
   // TEMPORARY
-  const isLoggedIn = false;
+  // const isLoggedIn = false;
 
   const handleProfile = () => {
     if (!isLoggedIn) {
       router.push("/login");
+    } else {
+      setIsProfileOpen((prev) => !prev);
     }
-    setIsProfileOpen((prev) => !prev);
   };
 
   // WIX-MANAGED AUTH
-  // const wixClient = useWixClient();
 
   // const login = async () => {
   //   const loginRequestData = wixClient.auth.generateOAuthData("http://localhost:3000");
@@ -33,7 +37,14 @@ const NavIcons = () => {
   //   window.location.href = authUrl;
   // };
 
-  
+  const handleLogout = async () => {
+    setIsLoading(true);
+    Cookies.remove("refreshToken");
+    const { logoutUrl } = await wixClient.auth.logout(window.location.href);
+    setIsLoading(false);
+    setIsProfileOpen(false);
+    router.push(logoutUrl);
+  };
   return (
     <div className="flex items-center gap-4 xl:gap-6 relative">
       <Image
@@ -45,9 +56,11 @@ const NavIcons = () => {
         onClick={handleProfile}
       />
       {isProfileOpen && (
-        <div className="absolute p-4 rounded-md top-12 left-0 text-sm shadow-[0_3px_10px_rgb(0,0,0,0.2)] z-20">
+        <div className="absolute p-4 rounded-md top-12 left-0 text-[11px] bg-white shadow-[0_3px_10px_rgb(0,0,0,0.2)] z-20 xl:text-sm">
           <Link href="/">Profile</Link>
-          <div className="mt-2 cursor-pointer">Logout</div>
+          <div className="mt-2 cursor-pointer" onClick={handleLogout}>
+            {isLoading ? "Logging out" : "Logout"}
+          </div>
         </div>
       )}
       <Image src="/notification.png" alt="notification" width={22} height={22} className="cursor-pointer" />

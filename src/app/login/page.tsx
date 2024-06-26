@@ -76,6 +76,7 @@ const LoginPage = () => {
           break;
         case MODE.RESET_PASSWORD:
           response = await wixClient.auth.sendPasswordResetEmail(email, window.location.href);
+          setMessage("Password reset email sent. Please check your email");
           break;
         case MODE.EMAIL_VERIFICATION:
           response = await wixClient.auth.processVerification({
@@ -96,7 +97,20 @@ const LoginPage = () => {
           wixClient.auth.setTokens(tokens);
           router.push("/");
           break;
-
+        case LoginState.FAILURE:
+          if (response.errorCode === "invalidEmail" || response.errorCode === "invalidPassword") {
+            setError("Invalid email or password");
+          } else if (response.errorCode === "emailAlreadyExists") {
+            setError("Email already exists");
+          } else if (response.errorCode === "resetPassword") {
+            setError("You need to reset your password");
+          } else {
+            setError("Something went wrong");
+          }
+        case LoginState.EMAIL_VERIFICATION_REQUIRED:
+          setMode(MODE.EMAIL_VERIFICATION);
+        case LoginState.OWNER_APPROVAL_REQUIRED:
+          setMessage("Your account is pending approval");
         default:
           break;
       }
@@ -109,7 +123,7 @@ const LoginPage = () => {
 
   return (
     <div className="h-[calc(100dvh-80px)] px-4 md:px-8 lg:px-16 xl:px-32 2xl:px-64 flex items-center justify-center">
-      <form className="flex flex-col gap-7 ring-2 ring-blue-100 lg:w-1/4 p-2 lg:p-4 rounded-lg" onSubmit={handleSubmit}>
+      <form className="flex flex-col gap-4 ring-2 ring-blue-100 lg:w-1/4 p-2 lg:p-4 rounded-lg" onSubmit={handleSubmit}>
         <h1 className="text-2xl font-semibold">{formTitle}</h1>
         {mode === MODE.REGISTER ? (
           <div className="flex flex-col gap-2">
@@ -129,7 +143,7 @@ const LoginPage = () => {
             <input
               type="email"
               name="email"
-              placeholder="name"
+              placeholder="email@gmail.com"
               className="ring-2 ring-gray-300 rounded-md p-4"
               onChange={(e) => setEmail(e.target.value)}
             />
