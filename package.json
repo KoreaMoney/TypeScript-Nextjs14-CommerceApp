@@ -10,6 +10,9 @@
   },
   "dependencies": {
     "@wix/bookings": "^1.0.396",
+    "@wix/ecom": "^1.0.613",
+    "@wix/members": "^1.0.86",
+    "@wix/redirects": "^1.0.48",
     "@wix/sdk": "^1.10.1",
     "@wix/stores": "^1.0.157",
     "isomorphic-dompurify": "^2.12.0",
