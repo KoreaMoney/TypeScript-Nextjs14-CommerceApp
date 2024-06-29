@@ -91,7 +91,9 @@ const ProductList = async ({ categoryId, limit, searchParams }: IProps) => {
           </button>
         </Link>
       ))}
-      <Pageination currentPage={res.currentPage || 0} hasPrev={res.hasPrev()} hasNext={res.hasNext()} />
+      {searchParams?.cat || searchParams?.name ? (
+        <Pageination currentPage={res.currentPage || 0} hasPrev={res.hasPrev()} hasNext={res.hasNext()} />
+      ) : null}
     </div>
   );
 };

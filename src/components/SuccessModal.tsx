@@ -15,7 +15,6 @@ const SuccessModal = ({ onClose }: SuccessModalProps): JSX.Element => {
           우리와 함께 쇼핑해 주셔서 감사합니다. <br />
           빠른시일 내 고객님께 배송될 수 있도록 노력하고 있습니다. 나중에 다시 만나기를 바랍니다.
         </p>
-
         <button
           onClick={onClose}
           className="w-full bg-alarm text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-200"
