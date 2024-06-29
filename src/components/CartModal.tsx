@@ -1,13 +1,39 @@
 "use client";
 
 import Image from "next/image";
+import { useCartStore } from "@/hooks/useCartStore";
+import { media as wixMedia } from "@wix/sdk";
+import { useWixClient } from "@/hooks/useWixClient";
+import { currentCart } from "@wix/ecom";
+import { useState } from "react";
+import SuccessModal from "./SuccessModal";
 
 const CartModal = () => {
-  const cartItems = true;
+  // TEMPORARY
+  // const cartItems = true;
+  const wixClient = useWixClient();
+  const [isCheckingOut, setIsCheckingOut] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const { cart, isLoading, removeItem, clearCart } = useCartStore();
+
+  // 가짜 체크아웃 프로세스 시뮬레이션
+  const handleCheckout = async () => {
+    try {
+      setIsCheckingOut(true);
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      await clearCart(wixClient);
+      setShowSuccessModal(true);
+    } catch (err) {
+      console.log(err);
+      alert("체크아웃 중 오류가 발생했습니다. 다시 시도해주세요.");
+    } finally {
+      setIsCheckingOut(false);
+    }
+  };
 
   return (
     <div className="w-max absolute p-4 rounded-md shadow-[0_3px_10px_rgb(0,0,0,0.2)] bg-white top-12 right-0 flex flex-col gap-6 z-20">
-      {!cartItems ? (
+      {!cart.lineItems ? (
         <div className="">Cart is Empty</div>
       ) : (
         <>
@@ -16,44 +42,81 @@ const CartModal = () => {
           {/* LIST TOP*/}
           <div className="flex flex-col gap-8">
             {/* ITEM */}
-            <div className="flex gap-4">
-              <Image
-                src="https://cdn.pixabay.com/photo/2022/10/04/21/25/xr-7499160_1280.jpg"
-                alt="image"
-                width={72}
-                height={72}
-                className="object-cover rounded-md"
-              />
-              <div className="flex flex-col justify-between w-full">
-                {/* TOP */}
-                <div className="">
-                  {/* TITLE */}
-                  <div className="flex items-center justify-between gap-8">
-                    <h3 className="font-semibold">Product Name</h3>
-                    <div className="p-1 bg-gray-50 rounded-sm">$50</div>
+            {cart.lineItems.map((item) => (
+              <div className="flex gap-4" key={item._id}>
+                {item.image && (
+                  <Image
+                    src={wixMedia.getScaledToFillImageUrl(item.image, 72, 96, {})}
+                    alt="image"
+                    width={72}
+                    height={72}
+                    className="object-cover rounded-md"
+                  />
+                )}
+                <div className="flex flex-col justify-between w-full">
+                  {/* TOP */}
+                  <div className="">
+                    {/* TITLE */}
+                    <div className="flex items-center justify-between gap-8">
+                      <h3 className="font-semibold">{item.productName?.original}</h3>
+                      <div className="p-1 bg-gray-50 rounded-sm flex items-center gap-2">
+                        {item.quantity && item.quantity > 1 && (
+                          <div className="text-xs text-blue-600">{item.quantity} x </div>
+                        )}
+                        {item.price?.formattedConvertedAmount}
+                      </div>
+                    </div>
+                    {/* DESC */}
+                    <div className="text-sm text-gray-500">
+                      <p className="mr-2">{item.availability?.status === "AVAILABLE" ? "구매 가능" : "구매 불가능"}</p>
+                    </div>
+                    <div className="text-sm text-gray-500 flex">
+                      {item.descriptionLines && (
+                        <p>
+                          {item.descriptionLines[0].colorInfo?.original}{" "}
+                          {item.descriptionLines[1] ? `- ${item.descriptionLines[1].plainText?.original}` : ""}
+                        </p>
+                      )}
+                    </div>
                   </div>
-                  {/* DESC */}
-                  <div className="text-sm text-gray-500">available</div>
-                </div>
-                {/* BOTTOM */}
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-500">Qty. 2</span>
-                  <span className="text-blue-500">Remove</span>
+                  {/* BOTTOM */}
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-500">Qty. {item.quantity}</span>
+                    <span
+                      className="text-blue-500"
+                      style={{ cursor: isLoading ? "not-allowed" : "pointer" }}
+                      onClick={() => removeItem(wixClient, item._id!)}
+                    >
+                      삭제하기
+                    </span>
+                  </div>
                 </div>
               </div>
-            </div>
+            ))}
           </div>
           {/* LIST BOTTOM */}
           <div className="">
             <div className="flex items-center justify-between font-semibold">
-              <span className="">Subtotal</span>
-              <span className="">$152</span>
+              <span className="">전체</span>
+              <span className="">{cart.subtotal.formattedAmount}</span>
             </div>
             {/* DESC */}
-            <p className="text-gray-500 text-sm mt-2 mb-4">Shipping and taxes calculated at checkout.</p>
+            <p className="text-gray-500 text-sm mt-2 mb-4">배송 금액과 세금은 제품에 포함되어 있습니다.</p>
             <div className="flex justify-between text-sm">
-              <button className="px-4 py-3 rounded-md ring-1 ring-gray-300">View Cart</button>
-              <button className="px-4 py-3 rounded-md bg-alarm text-white">Checkout</button>
+              <button className="px-4 py-3 rounded-md ring-1 ring-gray-300 hover:ring-2 hover:ring-blue-300">
+                장바구니
+              </button>
+              <button
+                className={`px-4 py-3 rounded-md bg-alarm text-white 
+                          ${isLoading && "opacity-75 cursor-not-allowed"} 
+                          ${cart.lineItems.length === 0 && "opacity-35 cursor-not-allowed"}`}
+                disabled={isLoading || cart.lineItems.length === 0}
+                onClick={handleCheckout}
+              >
+                {isCheckingOut ? "결제 중..." : "결제하기"}
+              </button>
+              {/* 성공 모달 */}
+              {showSuccessModal && <SuccessModal onClose={() => setShowSuccessModal(false)} />}
             </div>
           </div>
         </>
