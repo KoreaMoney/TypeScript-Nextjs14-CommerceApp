@@ -48,7 +48,7 @@ const ProductList = async ({ categoryId, limit, searchParams }: IProps) => {
       res.items.sort(sortFunctions[sortBy]);
     }
   }
-
+  console.log("res.items", res.items);
   return (
     <div className="mt-12 flex gap-x-8 gap-y-16 justify-between flex-wrap">
       {res.items.map((product: products.Product) => (
@@ -73,7 +73,7 @@ const ProductList = async ({ categoryId, limit, searchParams }: IProps) => {
           </div>
           <div className="flex justify-between">
             <span className="font-medium">{product.name}</span>
-            <span className="font-semibold">{product.priceData?.formatted.price}</span>
+            <span className="font-semibold">{product.priceData?.formatted.discountedPrice}</span>
           </div>
           {product.additionalInfoSections && (
             <div
