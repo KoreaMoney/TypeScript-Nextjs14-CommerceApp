@@ -88,12 +88,14 @@ const PaymentPage = () => {
 
   return (
     <div className="relative">
-      <div className={`px-4 md:px-8 lg:px-16 xl:px-32 2xl:px-64 ${isActiveAddress ? "blur-sm" : ""}`}>
+      <div className={`px-4  md:px-8 lg:px-16 xl:px-32 2xl:px-64 ${isActiveAddress ? "blur-sm" : ""}`}>
         <h1 className="font-semibold xl:text-2xl lg:text-xl">DWSH CHECKOUT</h1>
         <div className="h-[1px] bg-black mb-3 mt-3"></div>
-        <div className="flex">
+        <div className="flex flex-wrap gap-4">
+          {/* PAYMENT INFO */}
+          <PaymentInfo />
           {/* PAYMENT INPUT */}
-          <div className="flex-1 pl-7 pr-12">
+          <div className="flex-1 pl-5 pr-5 mt-3">
             <h3 className="font-medium xl:text-lg text-md mb-2">배송지 정보</h3>
             {inputArray.map((list) => (
               <div className="flex flex-col gap-2" key={list.id}>
@@ -138,8 +140,6 @@ const PaymentPage = () => {
             {/* 성공 모달 */}
             {showSuccessModal && <SuccessModal onClose={onClose} />}
           </div>
-          {/* PAYMENT INFO */}
-          <PaymentInfo />
         </div>
       </div>
       <div
