@@ -20,7 +20,7 @@ const CartModal = () => {
 
   return (
     <div className="w-max absolute p-4 rounded-md shadow-[0_3px_10px_rgb(0,0,0,0.2)] bg-white top-12 right-0 flex flex-col gap-6 z-20">
-      {!cart.lineItems ? (
+      {cart.lineItems?.length === 0 ? (
         <div className="">Cart is Empty</div>
       ) : (
         <>
@@ -29,57 +29,60 @@ const CartModal = () => {
           {/* LIST TOP*/}
           <div className="flex flex-col gap-8">
             {/* ITEM */}
-            {cart.lineItems.map((item) => (
-              <div className="flex gap-4" key={item._id}>
-                {item.image && (
-                  <Image
-                    src={wixMedia.getScaledToFillImageUrl(item.image, 72, 96, {})}
-                    alt="image"
-                    width={72}
-                    height={72}
-                    className="object-cover rounded-md"
-                  />
-                )}
-                <div className="flex flex-col justify-between w-full">
-                  {/* TOP */}
-                  <div className="">
-                    {/* TITLE */}
-                    <div className="flex items-center justify-between gap-8">
-                      <h3 className="font-semibold">{item.productName?.original}</h3>
-                      <div className="p-1 bg-gray-50 rounded-sm flex items-center gap-2">
-                        {item.quantity && item.quantity > 1 && (
-                          <div className="text-xs text-blue-600">{item.quantity} x </div>
+            {cart.lineItems &&
+              cart.lineItems.map((item) => (
+                <div className="flex gap-4" key={item._id}>
+                  {item.image && (
+                    <Image
+                      src={wixMedia.getScaledToFillImageUrl(item.image, 72, 96, {})}
+                      alt="image"
+                      width={72}
+                      height={72}
+                      className="object-cover rounded-md"
+                    />
+                  )}
+                  <div className="flex flex-col justify-between w-full">
+                    {/* TOP */}
+                    <div className="">
+                      {/* TITLE */}
+                      <div className="flex items-center justify-between gap-8">
+                        <h3 className="font-semibold">{item.productName?.original}</h3>
+                        <div className="p-1 bg-gray-50 rounded-sm flex items-center gap-2">
+                          {item.quantity && item.quantity > 1 && (
+                            <div className="text-xs text-blue-600">{item.quantity} x </div>
+                          )}
+                          {item.price?.formattedConvertedAmount}
+                        </div>
+                      </div>
+                      {/* DESC */}
+                      <div className="text-sm text-gray-500">
+                        <p className="mr-2">
+                          {item.availability?.status === "AVAILABLE" ? "구매 가능" : "구매 불가능"}
+                        </p>
+                      </div>
+                      <div className="text-sm text-gray-500 flex">
+                        {item.descriptionLines && (
+                          <p>
+                            {item.descriptionLines[0] ? item.descriptionLines[0].colorInfo?.original : ""}{" "}
+                            {item.descriptionLines[1] ? `- ${item.descriptionLines[1].plainText?.original}` : ""}
+                          </p>
                         )}
-                        {item.price?.formattedConvertedAmount}
                       </div>
                     </div>
-                    {/* DESC */}
-                    <div className="text-sm text-gray-500">
-                      <p className="mr-2">{item.availability?.status === "AVAILABLE" ? "구매 가능" : "구매 불가능"}</p>
+                    {/* BOTTOM */}
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-500">Qty. {item.quantity}</span>
+                      <span
+                        className="text-blue-500"
+                        style={{ cursor: isLoading ? "not-allowed" : "pointer" }}
+                        onClick={() => removeItem(wixClient, item._id!)}
+                      >
+                        삭제하기
+                      </span>
                     </div>
-                    <div className="text-sm text-gray-500 flex">
-                      {item.descriptionLines && (
-                        <p>
-                          {item.descriptionLines[0] ? item.descriptionLines[0].colorInfo?.original : ""}{" "}
-                          {item.descriptionLines[1] ? `- ${item.descriptionLines[1].plainText?.original}` : ""}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                  {/* BOTTOM */}
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-500">Qty. {item.quantity}</span>
-                    <span
-                      className="text-blue-500"
-                      style={{ cursor: isLoading ? "not-allowed" : "pointer" }}
-                      onClick={() => removeItem(wixClient, item._id!)}
-                    >
-                      삭제하기
-                    </span>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
           </div>
           {/* LIST BOTTOM */}
           <div className="">
@@ -96,8 +99,8 @@ const CartModal = () => {
               <button
                 className={`px-4 py-3 rounded-md bg-alarm text-white 
                           ${isLoading && "opacity-75 cursor-not-allowed"} 
-                          ${cart.lineItems.length === 0 && "opacity-35 cursor-not-allowed"}`}
-                disabled={isLoading || cart.lineItems.length === 0}
+                          ${cart.lineItems && cart.lineItems.length === 0 && "opacity-35 cursor-not-allowed"}`}
+                disabled={isLoading || (cart.lineItems && cart.lineItems.length === 0)}
                 onClick={handleCheckout}
               >
                 Checkout

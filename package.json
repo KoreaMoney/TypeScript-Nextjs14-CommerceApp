@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@emailjs/browser": "^4.3.3",
     "@tosspayments/payment-widget-sdk": "^0.10.2",
     "@wix/bookings": "^1.0.396",
     "@wix/ecom": "^1.0.613",

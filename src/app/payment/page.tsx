@@ -1,40 +1,29 @@
 "use client";
 
+import React, { useEffect, useState } from "react";
 import SuccessModal from "@/components/SuccessModal";
+import DaumPostcode from "react-daum-postcode";
+
+import { useRouter } from "next/navigation";
 import { useCartStore } from "@/hooks/useCartStore";
 import { useWixClient } from "@/hooks/useWixClient";
-import React, { useEffect, useState } from "react";
-
-import DaumPostcode from "react-daum-postcode";
-import { useRouter } from "next/navigation";
 import PaymentInfo from "@/components/PaymentInfo";
 
 const inputArray = [
-  {
-    id: 1,
-    title: "구매자 이름",
-    placeholder: "이름을 입력하세요.",
-    name: "buyerName",
-  },
-  {
-    id: 2,
-    title: "핸드폰 번호",
-    placeholder: "번호를 입력하세요.",
-    name: "phoneNumber",
-  },
-  {
-    id: 3,
-    title: "주소",
-    placeholder: "주소를 입력하세요.",
-    name: "address",
-  },
+  { id: 1, title: "이름", type: "text", placeholder: "이름을 입력하세요", name: "name" },
+  { id: 2, title: "전화번호", type: "tel", placeholder: "전화번호를 입력하세요", name: "phone" },
+  { id: 3, title: "이메일", type: "email", placeholder: "이메일을 입력하세요", name: "email" },
+  { id: 4, title: "주소", type: "text", placeholder: "주소를 입력하세요", name: "address" },
 ];
 
 const PaymentPage = () => {
   const wixClient = useWixClient();
-  const [addressValue, setAddressValue] = useState("");
-  const [buyerName, setBuyerName] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
+  const [formData, setFormData] = useState({
+    address: "",
+    email: "",
+    phone: "",
+    name: "",
+  });
 
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const [isActiveAddress, setIsActiveAddress] = useState(false);
@@ -42,12 +31,17 @@ const PaymentPage = () => {
   const [isFormValid, setIsFormValid] = useState(false);
 
   const router = useRouter();
-
+  
   const { clearCart } = useCartStore();
 
   useEffect(() => {
-    setIsFormValid(buyerName.trim() !== "" && phoneNumber.trim() !== "" && addressValue.trim() !== "");
-  }, [buyerName, phoneNumber, addressValue]);
+    const checkValue =
+      formData.name.trim() !== "" &&
+      formData.phone.trim() !== "" &&
+      formData.address.trim() !== "" &&
+      formData.email.trim() !== "";
+    setIsFormValid(checkValue);
+  }, [formData]);
 
   const onClose = () => {
     setShowSuccessModal(false);
@@ -71,7 +65,10 @@ const PaymentPage = () => {
   };
 
   const completeHandler = (data: any) => {
-    setAddressValue(data.address);
+    setFormData((prevData) => ({
+      ...prevData,
+      address: data.address,
+    }));
     if (data.address) {
       setIsActiveAddress(false);
     }
@@ -79,11 +76,10 @@ const PaymentPage = () => {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, name: string) => {
     const value = e.target.value;
-    if (name === "buyerName") {
-      setBuyerName(value);
-    } else if (name === "phoneNumber") {
-      setPhoneNumber(value);
-    }
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
   };
 
   return (
@@ -105,8 +101,8 @@ const PaymentPage = () => {
                 {list.title === "주소" ? (
                   <div className="flex justify-between h-8">
                     <input
-                      type="text"
-                      value={addressValue}
+                      type={list.type}
+                      value={formData.address}
                       placeholder={list.placeholder}
                       readOnly
                       className="ring-1 ring-gray-500 outline-none pl-1 rounded-sm w-[75%] text-sm"
@@ -120,9 +116,9 @@ const PaymentPage = () => {
                   </div>
                 ) : (
                   <input
-                    type="text"
+                    type={list.type}
                     placeholder={list.placeholder}
-                    value={list.name === "buyerName" ? buyerName : list.name === "phoneNumber" ? phoneNumber : ""}
+                    value={formData[list.name as keyof typeof formData]}
                     onChange={(e) => handleInputChange(e, list.name)}
                     className="ring-1 ring-gray-500 outline-none pl-1 rounded-sm h-8 text-sm"
                   />
@@ -138,7 +134,7 @@ const PaymentPage = () => {
               {isCheckingOut ? "결제 중..." : "결제하기"}
             </button>
             {/* 성공 모달 */}
-            {showSuccessModal && <SuccessModal onClose={onClose} />}
+            {showSuccessModal && <SuccessModal onClose={onClose} formData={formData} />}
           </div>
         </div>
       </div>
