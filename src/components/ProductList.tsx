@@ -11,6 +11,11 @@ interface IProps {
   searchParams?: any;
 }
 
+interface Item {
+  price?: { discountedPrice: number };
+  lastUpdated: string;
+}
+
 const PRODUCT_PER_PAGE = 8;
 
 const ProductList = async ({ categoryId, limit, searchParams }: IProps) => {
@@ -27,28 +32,27 @@ const ProductList = async ({ categoryId, limit, searchParams }: IProps) => {
     .skip(searchParams?.page ? parseInt(searchParams.page) * (limit || PRODUCT_PER_PAGE) : 0);
 
   const res = await productQuery.find();
-
   if (searchParams?.sort) {
     const [sortType, sortBy] = searchParams.sort.split(" ");
 
     const sortFunctions = {
-      price: (a, b) => {
-        const priceA = a.price?.price || 0;
-        const priceB = b.price?.price || 0;
+      price: (a: Item, b: Item) => {
+        const priceA = a.price?.discountedPrice || 0;
+        const priceB = b.price?.discountedPrice || 0;
         return sortType === "asc" ? priceA - priceB : priceB - priceA;
       },
-      lastUpdated: (a, b) => {
+      lastUpdated: (a: Item, b: Item) => {
         const dateA = new Date(a?.lastUpdated).getTime() || 0;
         const dateB = new Date(b?.lastUpdated).getTime() || 0;
         return sortType === "asc" ? dateB - dateA : dateA - dateB;
       },
     };
 
-    if (sortFunctions[sortBy]) {
+    if (sortFunctions[sortBy as keyof typeof sortFunctions]) {
       res.items.sort(sortFunctions[sortBy]);
     }
   }
-  console.log("res.items", res.items);
+
   return (
     <div className="mt-12 flex gap-x-8 gap-y-16 justify-between flex-wrap">
       {res.items.map((product: products.Product) => (

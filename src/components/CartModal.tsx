@@ -4,31 +4,18 @@ import Image from "next/image";
 import { useCartStore } from "@/hooks/useCartStore";
 import { media as wixMedia } from "@wix/sdk";
 import { useWixClient } from "@/hooks/useWixClient";
-import { currentCart } from "@wix/ecom";
-import { useState } from "react";
-import SuccessModal from "./SuccessModal";
+import { useRouter } from "next/navigation";
 
 const CartModal = () => {
   // TEMPORARY
   // const cartItems = true;
   const wixClient = useWixClient();
-  const [isCheckingOut, setIsCheckingOut] = useState(false);
-  const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const { cart, isLoading, removeItem, clearCart } = useCartStore();
+  const router = useRouter();
+  const { cart, isLoading, removeItem } = useCartStore();
 
   // 가짜 체크아웃 프로세스 시뮬레이션
-  const handleCheckout = async () => {
-    try {
-      setIsCheckingOut(true);
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      await clearCart(wixClient);
-      setShowSuccessModal(true);
-    } catch (err) {
-      console.log(err);
-      alert("체크아웃 중 오류가 발생했습니다. 다시 시도해주세요.");
-    } finally {
-      setIsCheckingOut(false);
-    }
+  const handleCheckout = () => {
+    router.push("/payment");
   };
 
   return (
@@ -73,7 +60,7 @@ const CartModal = () => {
                     <div className="text-sm text-gray-500 flex">
                       {item.descriptionLines && (
                         <p>
-                          {item.descriptionLines[0].colorInfo?.original}{" "}
+                          {item.descriptionLines[0] ? item.descriptionLines[0].colorInfo?.original : ""}{" "}
                           {item.descriptionLines[1] ? `- ${item.descriptionLines[1].plainText?.original}` : ""}
                         </p>
                       )}
@@ -113,10 +100,8 @@ const CartModal = () => {
                 disabled={isLoading || cart.lineItems.length === 0}
                 onClick={handleCheckout}
               >
-                {isCheckingOut ? "결제 중..." : "결제하기"}
+                Checkout
               </button>
-              {/* 성공 모달 */}
-              {showSuccessModal && <SuccessModal onClose={() => setShowSuccessModal(false)} />}
             </div>
           </div>
         </>

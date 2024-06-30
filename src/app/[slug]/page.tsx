@@ -13,7 +13,6 @@ interface IProps {
 
 const SinglePage = async ({ params }: IProps) => {
   const wixClient = await wixClientServer();
-
   const products = await wixClient.products.queryProducts().eq("slug", params.slug).find();
 
   if (!products.items[0]) {
