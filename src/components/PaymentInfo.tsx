@@ -54,13 +54,12 @@ const PaymentInfo = () => {
             </div>
           ))}
       </div>
-      <div
-        className={`flex items-center justify-between font-semibold ${
-          cart.lineItems && cart.lineItems?.length >= 2 ? "mt-16" : "mt-40"
-        }`}
-      >
-        <span className="">전체 금액</span>
-        <span className="">{cart.subtotal?.formattedAmount}</span>
+      <div className={` ${cart.lineItems && cart.lineItems?.length >= 2 ? "mt-12" : "mt-32"}`}>
+        <div className="flex justify-end mb-2">배송비 무료</div>
+        <div className="flex items-center justify-between font-semibold">
+          <span className="">전체 금액</span>
+          <span className="">{cart.subtotal?.formattedAmount}</span>
+        </div>
       </div>
     </div>
   );
