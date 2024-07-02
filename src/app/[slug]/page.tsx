@@ -4,6 +4,8 @@ import CustomizeProducts from "@/components/CustomizeProducts";
 import { wixClientServer } from "@/lib/wixClientServer";
 import { notFound } from "next/navigation";
 import DOMPurify from "isomorphic-dompurify";
+import { Suspense } from "react";
+import Reviews from "@/components/Reviews";
 
 interface IProps {
   params: {
@@ -61,6 +63,12 @@ const SinglePage = async ({ params }: IProps) => {
             <p dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(section.description) }}></p>
           </div>
         ))}
+        <div className="h-[2px] bg-gray-100" />
+        {/* REVIEWS */}
+        <h1 className="text-2xl">User Reviews</h1>
+        <Suspense fallback="Loading...">
+          <Reviews productId={product._id!} />
+        </Suspense>
       </div>
     </div>
   );

@@ -1,5 +1,7 @@
 # NEXT.JS 14 E-Commerce
 
+- ADMIN는 라이브러리 사용버전
+
 - @autor KIMDOWON
 - @date 24.06.14.
 
@@ -21,7 +23,7 @@ TypeScript기본 학습
 
 Nextjs14, TailwindCss, wix
 
-## Headless
+## Headless (ADMIN)
 
 <a href="https://dev.wix.com/docs/go-headless/coding/java-script-sdk/visitors-and-members/create-a-client-with-oauth">WIX doc</a>
 <br/>
