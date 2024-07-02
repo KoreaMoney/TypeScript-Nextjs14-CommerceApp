@@ -1,17 +1,20 @@
 import { OAuthStrategy, createClient } from "@wix/sdk";
 import { collections, products } from "@wix/stores";
 import { orders } from "@wix/ecom";
-import { cookies } from "next/headers";
 import { members } from "@wix/members";
 
 export const wixClientServer = async () => {
   let refreshToken;
 
-  try {
-    const cookieStore = cookies();
-    refreshToken = JSON.parse(cookieStore.get("refreshToken")?.value || "{}");
-  } catch (e) {
-    console.log("error", e);
+  if (typeof window === "undefined") {
+    // 서버 사이드에서만 실행
+    const { cookies } = await import("next/headers");
+    try {
+      const cookieStore = cookies();
+      refreshToken = JSON.parse(cookieStore.get("refreshToken")?.value || "{}");
+    } catch (e) {
+      console.log("error", e);
+    }
   }
 
   const wixClient = createClient({
