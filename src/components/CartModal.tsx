@@ -88,7 +88,7 @@ const CartModal = () => {
           <div className="">
             <div className="flex items-center justify-between font-semibold">
               <span className="">전체</span>
-              <span className="">{cart.subtotal.formattedAmount}</span>
+              <span className="">{(cart as any).subtotal.formattedAmount}</span>
             </div>
             {/* DESC */}
             <p className="text-gray-500 text-sm mt-2 mb-4">배송 금액과 세금은 제품에 포함되어 있습니다.</p>
