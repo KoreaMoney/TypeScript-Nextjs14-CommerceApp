@@ -1,7 +1,7 @@
 "use server";
 
 import { wixClientServer } from "./wixClientServer";
-
+export const dynamic = "force-dynamic";
 export const updateUser = async (formData: FormData) => {
   const wixClient = await wixClientServer();
 

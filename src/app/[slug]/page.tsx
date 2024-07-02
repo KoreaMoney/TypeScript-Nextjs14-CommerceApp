@@ -7,6 +7,7 @@ import DOMPurify from "isomorphic-dompurify";
 import { Suspense } from "react";
 import Reviews from "@/components/Reviews";
 
+export const dynamic = 'force-dynamic';
 interface IProps {
   params: {
     slug: string;

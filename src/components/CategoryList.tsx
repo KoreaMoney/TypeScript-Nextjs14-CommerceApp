@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { wixClientServer } from "@/lib/wixClientServer";
-
+export const dynamic = "force-dynamic";
 const CategoryList = async () => {
   const wixClient = await wixClientServer();
   const cat = await wixClient.collections.queryCollections().find();

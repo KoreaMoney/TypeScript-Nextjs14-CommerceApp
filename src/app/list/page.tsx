@@ -5,6 +5,7 @@ import { wixClientServer } from "@/lib/wixClientServer";
 import { Suspense } from "react";
 import Skeleton from "@/components/Skeleton";
 
+export const dynamic = "force-dynamic";
 interface IProps {
   searchParams: any;
 }

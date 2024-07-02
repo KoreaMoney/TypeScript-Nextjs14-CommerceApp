@@ -1,10 +1,10 @@
 import Slider from "@/components/Slider";
 import ProductList from "@/components/ProductList";
 import CategoryList from "@/components/CategoryList";
-import { useContext, useEffect, Suspense } from "react";
-import { WixClientContext } from "@/context/wixContext";
-import { useWixClient } from "@/hooks/useWixClient";
-import { wixClientServer } from "@/lib/wixClientServer";
+import { Suspense } from "react";
+// import { WixClientContext } from "@/context/wixContext";
+// import { useWixClient } from "@/hooks/useWixClient";
+// import { wixClientServer } from "@/lib/wixClientServer";
 
 import Skeleton from "@/components/Skeleton";
 

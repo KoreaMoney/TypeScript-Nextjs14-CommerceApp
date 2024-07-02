@@ -4,7 +4,7 @@ import { wixClientServer } from "@/lib/wixClientServer";
 import { products } from "@wix/stores";
 import DOMPurify from "isomorphic-dompurify";
 import Pageination from "./Pageination";
-
+export const dynamic = "force-dynamic";
 interface IProps {
   categoryId: string;
   limit?: number;

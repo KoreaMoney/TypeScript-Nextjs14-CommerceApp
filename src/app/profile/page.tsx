@@ -2,7 +2,7 @@ import UpdateButton from "@/components/UpdateButton";
 import { updateUser } from "@/lib/actions";
 import { wixClientServer } from "@/lib/wixClientServer";
 import { members } from "@wix/members";
-
+export const dynamic = "force-dynamic";
 const ProfilePage = async () => {
   const wixClient = await wixClientServer();
   const user = await wixClient.members.getCurrentMember({
