@@ -58,7 +58,7 @@ const PaymentInfo = () => {
         <div className="flex justify-end mb-2">배송비 무료</div>
         <div className="flex items-center justify-between font-semibold">
           <span className="">전체 금액</span>
-          <span className="">{cart.subtotal?.formattedAmount}</span>
+          <span className="">{(cart as any).subtotal?.formattedAmount}</span>
         </div>
       </div>
     </div>

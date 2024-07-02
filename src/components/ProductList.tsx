@@ -32,24 +32,27 @@ const ProductList = async ({ categoryId, limit, searchParams }: IProps) => {
     .skip(searchParams?.page ? parseInt(searchParams.page) * (limit || PRODUCT_PER_PAGE) : 0);
 
   const res = await productQuery.find();
+
   if (searchParams?.sort) {
     const [sortType, sortBy] = searchParams.sort.split(" ");
 
-    const sortFunctions = {
-      price: (a: Item, b: Item) => {
-        const priceA = a.price?.discountedPrice || 0;
-        const priceB = b.price?.discountedPrice || 0;
+    type SortBy = "price" | "lastUpdated";
+
+    const sortFunctions: Record<SortBy, (a: products.Product, b: products.Product) => number> = {
+      price: (a, b) => {
+        const priceA = a.priceData?.discountedPrice || 0;
+        const priceB = b.priceData?.discountedPrice || 0;
         return sortType === "asc" ? priceA - priceB : priceB - priceA;
       },
-      lastUpdated: (a: Item, b: Item) => {
-        const dateA = new Date(a?.lastUpdated).getTime() || 0;
-        const dateB = new Date(b?.lastUpdated).getTime() || 0;
+      lastUpdated: (a, b) => {
+        const dateA = new Date(a.lastUpdated || "").getTime();
+        const dateB = new Date(b.lastUpdated || "").getTime();
         return sortType === "asc" ? dateB - dateA : dateA - dateB;
       },
     };
 
-    if (sortFunctions[sortBy as keyof typeof sortFunctions]) {
-      res.items.sort(sortFunctions[sortBy]);
+    if (sortBy in sortFunctions) {
+      res.items.sort(sortFunctions[sortBy as SortBy]);
     }
   }
 
@@ -77,7 +80,7 @@ const ProductList = async ({ categoryId, limit, searchParams }: IProps) => {
           </div>
           <div className="flex justify-between">
             <span className="font-medium">{product.name}</span>
-            <span className="font-semibold">{product.priceData?.formatted.discountedPrice}</span>
+            <span className="font-semibold">{product.priceData?.formatted?.discountedPrice}</span>
           </div>
           {product.additionalInfoSections && (
             <div
